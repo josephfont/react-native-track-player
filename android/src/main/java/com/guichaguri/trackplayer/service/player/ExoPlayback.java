@@ -1,5 +1,7 @@
 package com.guichaguri.trackplayer.service.player;
 
+import static android.content.Context.MODE_PRIVATE;
+
 import android.content.Context;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
@@ -24,15 +26,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-/**
- * @author Guichaguri
- */
 public abstract class ExoPlayback<T extends Player>
   implements EventListener, MetadataOutput {
 
   protected final Context context;
   protected final MusicManager manager;
   protected final T player;
+  public static final String MY_PREFS_NAME = "HuruplayPreferences";
 
   protected List<Track> queue = Collections.synchronizedList(new ArrayList<>());
 
@@ -141,13 +141,9 @@ public abstract class ExoPlayback<T extends Player>
     player.setPlayWhenReady(true);
   }
 
-  public void loopEnable() {
-    
-  }
+  public void loopEnable() {}
 
-  public void loopDisable() {
-    
-  }
+  public void loopDisable() {}
 
   public void pause() {
     player.setPlayWhenReady(false);
@@ -203,15 +199,24 @@ public abstract class ExoPlayback<T extends Player>
 
   public float getVolume() {
     //player.setRepeatMode(Player.REPEAT_MODE_ONE);
-    player.setRepeatMode(Player.REPEAT_MODE_OFF);
-    //return getPlayerVolume() / volumeMultiplier;
-    return 0;
+    //player.setRepeatMode(Player.REPEAT_MODE_OFF);
+    return getPlayerVolume() / volumeMultiplier;
   }
 
   public void setVolume(float volume) {
-    player.setRepeatMode(Player.REPEAT_MODE_ONE);
-    //player.setRepeatMode(Player.REPEAT_MODE_OFF);
-    //setPlayerVolume(volume * volumeMultiplier);
+    SharedPreferences prefs = activity.getSharedPreferences(
+      MY_PREFS_NAME,
+      MODE_PRIVATE
+    );
+
+    String loopEnabled = prefs.getString("loopEnabled", "true");
+    if (loopEnabled.equals("true")) {
+      player.setRepeatMode(Player.REPEAT_MODE_OFF);
+      editor.putString("loopEnabled", "false");
+    } else {
+      player.setRepeatMode(Player.REPEAT_MODE_ONE);
+      editor.putString("loopEnabled", "true");
+    }
   }
 
   public void setVolumeMultiplier(float multiplier) {
