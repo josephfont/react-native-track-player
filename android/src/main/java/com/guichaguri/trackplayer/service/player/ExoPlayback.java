@@ -142,11 +142,11 @@ public abstract class ExoPlayback<T extends Player>
   }
 
   public void loopEnable() {
-    player.setRepeatMode(Player.REPEAT_MODE_ONE);
+    
   }
 
   public void loopDisable() {
-    player.setRepeatMode(Player.REPEAT_MODE_OFF);
+    
   }
 
   public void pause() {
@@ -202,11 +202,16 @@ public abstract class ExoPlayback<T extends Player>
   }
 
   public float getVolume() {
-    return getPlayerVolume() / volumeMultiplier;
+    //player.setRepeatMode(Player.REPEAT_MODE_ONE);
+    player.setRepeatMode(Player.REPEAT_MODE_OFF);
+    //return getPlayerVolume() / volumeMultiplier;
+    return 0;
   }
 
   public void setVolume(float volume) {
-    setPlayerVolume(volume * volumeMultiplier);
+    player.setRepeatMode(Player.REPEAT_MODE_ONE);
+    //player.setRepeatMode(Player.REPEAT_MODE_OFF);
+    //setPlayerVolume(volume * volumeMultiplier);
   }
 
   public void setVolumeMultiplier(float multiplier) {
