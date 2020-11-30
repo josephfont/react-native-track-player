@@ -338,6 +338,22 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
     }
 
     @ReactMethod
+    public void loopEnable(final Promise callback) {
+        waitForConnection(() -> {
+            binder.getPlayback().loopEnable();
+            callback.resolve(null);
+        });
+    }
+
+    @ReactMethod
+    public void loopDisable(final Promise callback) {
+        waitForConnection(() -> {
+            binder.getPlayback().loopDisable();
+            callback.resolve(null);
+        });
+    }
+
+    @ReactMethod
     public void seekTo(final float seconds, final Promise callback) {
         waitForConnection(() -> {
             long secondsToSkip = Utils.toMillis(seconds);
@@ -456,10 +472,6 @@ public class MusicModule extends ReactContextBaseJavaModule implements ServiceCo
 
     @ReactMethod
     public void getState(final Promise callback) {
-        if (binder == null) {
-            callback.resolve(PlaybackStateCompat.STATE_NONE);
-        } else {
-            waitForConnection(() -> callback.resolve(binder.getPlayback().getState()));
-        }
+        waitForConnection(() -> callback.resolve(binder.getPlayback().getState()));
     }
 }
