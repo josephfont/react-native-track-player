@@ -204,10 +204,13 @@ public abstract class ExoPlayback<T extends Player>
   }
 
   public void setVolume(float volume) {
-    SharedPreferences prefs = activity.getSharedPreferences(
+    SharedPreferences prefs = context.getSharedPreferences(
       MY_PREFS_NAME,
       MODE_PRIVATE
     );
+    SharedPreferences.Editor editor = context
+      .getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE)
+      .edit();
 
     String loopEnabled = prefs.getString("loopEnabled", "true");
     if (loopEnabled.equals("true")) {
