@@ -137,6 +137,8 @@ declare namespace RNTrackPlayer {
 
   export function reset(): Promise<void>;
   export function play(): Promise<void>;
+  export function loopEnable(): Promise<void>;
+  export function loopDisable(): Promise<void>;
   export function pause(): Promise<void>;
   export function stop(): Promise<void>;
   export function seekTo(seconds: number): Promise<void>;
