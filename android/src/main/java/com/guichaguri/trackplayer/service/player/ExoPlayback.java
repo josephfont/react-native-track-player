@@ -1,9 +1,9 @@
 package com.guichaguri.trackplayer.service.player;
 
 import static android.content.Context.MODE_PRIVATE;
-import android.content.SharedPreferences;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import com.facebook.react.bridge.Promise;
@@ -27,13 +27,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+/**
+ * @author Guichaguri
+ */
 public abstract class ExoPlayback<T extends Player>
   implements EventListener, MetadataOutput {
 
   protected final Context context;
   protected final MusicManager manager;
   protected final T player;
+
+  SharedPreferences prefs;
   public static final String MY_PREFS_NAME = "HuruplayPreferences";
+  Boolean loopEnabled = false;
 
   protected List<Track> queue = Collections.synchronizedList(new ArrayList<>());
 
@@ -53,6 +59,7 @@ public abstract class ExoPlayback<T extends Player>
   }
 
   public void initialize() {
+    prefs = context.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
     player.addListener(this);
   }
 
@@ -142,9 +149,13 @@ public abstract class ExoPlayback<T extends Player>
     player.setPlayWhenReady(true);
   }
 
-  public void loopEnable() {}
+  public void loopEnable() {
+    Log.d("Loop", "...enable");
+  }
 
-  public void loopDisable() {}
+  public void loopDisable() {
+    Log.d("Loop", "...enable");
+  }
 
   public void pause() {
     player.setPlayWhenReady(false);
@@ -199,28 +210,28 @@ public abstract class ExoPlayback<T extends Player>
   }
 
   public float getVolume() {
-    //player.setRepeatMode(Player.REPEAT_MODE_ONE);
-    //player.setRepeatMode(Player.REPEAT_MODE_OFF);
     return getPlayerVolume() / volumeMultiplier;
   }
 
   public void setVolume(float volume) {
-    SharedPreferences prefs = context.getSharedPreferences(
-      MY_PREFS_NAME,
-      MODE_PRIVATE
-    );
-    SharedPreferences.Editor editor = context
-      .getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE)
-      .edit();
-
-    String loopEnabled = prefs.getString("loopEnabled", "true");
-    if (loopEnabled.equals("true")) {
-      player.setRepeatMode(Player.REPEAT_MODE_OFF);
-      editor.putString("loopEnabled", "false");
+    String loopEnabledVal = prefs.getString("loopEnabled", "false");
+    
+    if (loopEnabledVal.equals("true")) {
+      Log.d("LOOPER:","is enabled: "+loopEnabledVal);
+      if (!loopEnabled) {
+        player.setRepeatMode(Player.REPEAT_MODE_ONE);
+        loopEnabled = true;
+         Log.d("LOOPER:","...setting repeat mode to true");
+      }
     } else {
-      player.setRepeatMode(Player.REPEAT_MODE_ONE);
-      editor.putString("loopEnabled", "true");
+      Log.d("LOOPER:","is disabled: "+loopEnabledVal);
+      if (loopEnabled) {
+        player.setRepeatMode(Player.REPEAT_MODE_OFF);
+        loopEnabled = false;
+        Log.d("LOOPER:","...setting repeat mode to false");
+      }
     }
+    setPlayerVolume(volume * volumeMultiplier);
   }
 
   public void setVolumeMultiplier(float multiplier) {
