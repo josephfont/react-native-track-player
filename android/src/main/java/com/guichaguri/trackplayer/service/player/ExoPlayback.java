@@ -3,7 +3,7 @@ package com.guichaguri.trackplayer.service.player;
 import static android.content.Context.MODE_PRIVATE;
 
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.content.SharedPreferences; 
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.util.Log;
 import com.facebook.react.bridge.Promise;
