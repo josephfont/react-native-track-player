@@ -40,7 +40,7 @@ public abstract class ExoPlayback<T extends Player>
   SharedPreferences prefs;
   public static final String MY_PREFS_NAME = "HuruplayPreferences";
   Boolean loopEnabled = false;
-
+  Boolean shuffleEnabled = false;
   protected List<Track> queue = Collections.synchronizedList(new ArrayList<>());
 
   // https://github.com/google/ExoPlayer/issues/2728
@@ -214,14 +214,13 @@ public abstract class ExoPlayback<T extends Player>
   }
 
   public void setVolume(float volume) {
-    String loopEnabledVal = prefs.getString("loopEnabled", "false");
-    
-    if (loopEnabledVal.equals("true")) {
+    String loopEnabledVal = prefs.getString("playOptions", "false:false");
+    if (loopEnabledVal.startsWith("true")) {
       Log.d("LOOPER:","is enabled: "+loopEnabledVal);
       if (!loopEnabled) {
         player.setRepeatMode(Player.REPEAT_MODE_ONE);
         loopEnabled = true;
-         Log.d("LOOPER:","...setting repeat mode to true");
+        Log.d("LOOPER:","...setting repeat mode to true");
       }
     } else {
       Log.d("LOOPER:","is disabled: "+loopEnabledVal);
@@ -229,6 +228,21 @@ public abstract class ExoPlayback<T extends Player>
         player.setRepeatMode(Player.REPEAT_MODE_OFF);
         loopEnabled = false;
         Log.d("LOOPER:","...setting repeat mode to false");
+      }
+    }
+    if (loopEnabledVal.endsWith("true")) {
+      Log.d("SHUFFLE:","is enabled: "+loopEnabledVal);
+      if (!shuffleEnabled) {
+        player.setShuffleModeEnabled(true);
+        shuffleEnabled = true;
+        Log.d("SHUFFLE:","...setting shuffle mode to true");
+      }
+    } else {
+      Log.d("SHUFFLE:","is disabled: "+loopEnabledVal);
+      if (shuffleEnabled) {
+        player.setShuffleModeEnabled(false);
+        shuffleEnabled = false;
+        Log.d("SHUFFLE:","...setting shuffle mode to false");
       }
     }
     setPlayerVolume(volume * volumeMultiplier);
